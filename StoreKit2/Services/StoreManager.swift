@@ -30,11 +30,11 @@ protocol StoreKitManageable {
 }
 
 @Observable
-class StoreManager: StoreKitManageable {
+class StoreManager: StoreKitManageable, ObservableObject {
     private(set) var products = [Product]()
     var transactionCompletionStatus: Bool = false
     
-    private let productsIds = ["noncomsumable.pro", "consumable.week", "subscription.yearly"]
+    private let productsIds = ["nonconsumable.lifetime", "consumable.week", "subscription.yearly"]
     private(set) var purchaseStatus: PurchaseStatus = .unknown
     private(set) var transactionListener: Task<Void, Error>?
     

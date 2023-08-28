@@ -5,18 +5,18 @@
   ],
   "products" : [
     {
-      "displayPrice" : "4.99",
+      "displayPrice" : "9.99",
       "familyShareable" : true,
       "internalID" : "EE126DB8",
       "localizations" : [
         {
-          "description" : "",
-          "displayName" : "",
+          "description" : "Unlock all features forever.",
+          "displayName" : "Lifetime Access",
           "locale" : "en_US"
         }
       ],
-      "productID" : "nonconsumable.pro",
-      "referenceName" : "Pro",
+      "productID" : "nonconsumable.lifetime",
+      "referenceName" : "Lifetime",
       "type" : "NonConsumable"
     },
     {
@@ -25,8 +25,8 @@
       "internalID" : "67707CF0",
       "localizations" : [
         {
-          "description" : "",
-          "displayName" : "",
+          "description" : "Unloack all feature of this app for one week.",
+          "displayName" : "Weekly Access",
           "locale" : "en_US"
         }
       ],
@@ -37,6 +37,8 @@
   ],
   "settings" : {
     "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
     "_storeKitErrors" : [
       {
         "current" : null,
@@ -100,20 +102,20 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "0.99",
-          "familyShareable" : false,
+          "displayPrice" : "2.99",
+          "familyShareable" : true,
           "groupNumber" : 1,
           "internalID" : "053EC74A",
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "",
-              "displayName" : "",
+              "description" : "Unloack all feature of this app for one year.",
+              "displayName" : "Yearly Access",
               "locale" : "en_US"
             }
           ],
           "productID" : "subscription.yearly",
-          "recurringSubscriptionPeriod" : "P1M",
+          "recurringSubscriptionPeriod" : "P1Y",
           "referenceName" : "Yearly Access",
           "subscriptionGroupID" : "93FE6D45",
           "type" : "RecurringSubscription"
