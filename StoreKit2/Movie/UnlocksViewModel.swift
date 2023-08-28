@@ -9,7 +9,7 @@ import Foundation
 import Observation
 
 @Observable
-class MoviesViewModel {
+class UnlocksViewModel: ObservableObject {
     private(set) var storeManager: StoreManager
     private(set) var status: String?
     var transactionStatus: Bool = false

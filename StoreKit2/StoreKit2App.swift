@@ -11,7 +11,7 @@ import SwiftUI
 struct StoreKit2App: App {
     var body: some Scene {
         WindowGroup {
-            MoviesView(vm: MoviesViewModel(storeManager: StoreManager()))
+            UnlocksListView(vm: UnlocksViewModel(storeManager: StoreManager()))
         }
     }
 }

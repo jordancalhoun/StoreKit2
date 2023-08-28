@@ -61,6 +61,15 @@ struct ProductView: View {
 
 
 #Preview {
-    ProductListView()
-        .environmentObject(StoreManager())
+//    ProductListView()
+//        .environmentObject(StoreManager())
+    @State var vm: ProductViewModel?
+    
+    ProductView(vm: vm ?? ProductViewModel(storeManager: StoreManager(), product: StoreManager().products.first!))
+        .task {
+            let store = StoreManager()
+            await store.retrieveProducts()
+            let product = store.products.first!
+            vm = ProductViewModel(storeManager: store, product: product)
+        }
 }
