@@ -32,6 +32,7 @@
 		9ED448AF2A9D02CA0095A160 /* ProductListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductListView.swift; sourceTree = "<group>"; };
 		9ED448B42A9D085C0095A160 /* MoviesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesViewModel.swift; sourceTree = "<group>"; };
 		9ED448B62A9D0A200095A160 /* MoviesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesView.swift; sourceTree = "<group>"; };
+		9ED448B82A9D128E0095A160 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,6 +49,7 @@
 		9ED448872A9CE9840095A160 = {
 			isa = PBXGroup;
 			children = (
+				9ED448B82A9D128E0095A160 /* README.md */,
 				9ED448922A9CE9840095A160 /* StoreKit2 */,
 				9ED448912A9CE9840095A160 /* Products */,
 			);

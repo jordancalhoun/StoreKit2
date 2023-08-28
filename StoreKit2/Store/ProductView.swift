@@ -24,12 +24,17 @@ struct ProductView: View {
                         .font(.title2)
                         .multilineTextAlignment(.leading)
                         .fontWeight(.semibold)
-                        .padding([.leading, .bottom, .top])
+                        .padding([.leading, .top])
+                        .fontDesign(.rounded)
+                        .foregroundStyle(.white)
                     
                     Text(vm.product.description)
                         .multilineTextAlignment(.leading)
                         .fontWeight(.regular)
                         .padding(.leading)
+                        .padding(.top, 5)
+                        .foregroundStyle(.regularMaterial)
+                        .fontDesign(.rounded)
                 }.padding(.bottom)
                 
                 Spacer()
@@ -37,13 +42,18 @@ struct ProductView: View {
                 Button {
                     vm.purchase()
                 } label: {
-                    Text("\(vm.product.displayPrice)")
-                        .foregroundColor(.white)
+                    Text(vm.product.displayPrice)
+                        .fontWeight(.bold)
+                        .font(.headline)
+                        .fontDesign(.rounded)
+                        .foregroundStyle(.white)
                 }
-                .tint(.cyan)
-                .font(.title3)
+                .tint(.teal)
                 .buttonStyle(.borderedProminent)
                 .padding()
+                .font(.title3)
+                
+                
             }
         }
     }
