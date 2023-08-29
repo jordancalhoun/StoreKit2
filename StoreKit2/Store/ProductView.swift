@@ -10,7 +10,6 @@ import StoreKit
 
 
 struct ProductView: View {
-    @EnvironmentObject private var storeManager: StoreManager
     let vm: ProductViewModel
     
     var body: some View {
@@ -60,16 +59,31 @@ struct ProductView: View {
 }
 
 
-#Preview {
-//    ProductListView()
-//        .environmentObject(StoreManager())
-    @State var vm: ProductViewModel?
+
+//    @State var storeManager = StoreManager()
+//    @State var product: Product?
+//    @State var vm = ProductViewModel(storeManager: storeManager, product: product!)
+//    return ProductView(vm: vm)
+//        .task {
+//            await storeManager.retrieveProducts()
+//        }
     
-    ProductView(vm: vm ?? ProductViewModel(storeManager: StoreManager(), product: StoreManager().products.first!))
-        .task {
-            let store = StoreManager()
-            await store.retrieveProducts()
-            let product = store.products.first!
-            vm = ProductViewModel(storeManager: store, product: product)
+    
+
+
+struct ProductView_Preview: PreviewProvider {
+    @StateObject static var storeManager = StoreManager()
+    @State static var product: Product?
+    
+    
+    static var previews: some View {
+        Group {
+            if let product {
+                ProductView(vm: ProductViewModel(storeManager: storeManager, product: product))
+            }
         }
+        .task {
+            product = try! await storeManager.getTestProduct()
+        }
+    }
 }

@@ -63,6 +63,21 @@ class StoreManager: StoreKitManageable, ObservableObject {
         }
     }
     
+    ///For testing previews
+    func getTestProduct() async throws -> Product {
+        do {
+            let products = try await Product.products(for: productsIds)
+            
+            if (products.first != nil) {
+                return products.first!
+            }else {
+                throw(StoreKitError.unknownError)
+            }
+        } catch {
+            throw(error)
+        }
+    }
+    
     /// Make a purchase
     func purchase(_ product: Product) async {
         do {
