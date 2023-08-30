@@ -10,7 +10,8 @@ import StoreKit
 
 
 struct ProductView: View {
-    let vm: ProductViewModel
+    @EnvironmentObject var vm: StoreViewModel
+    let product: Product
     
     var body: some View {
         ZStack {
@@ -19,7 +20,7 @@ struct ProductView: View {
             
             HStack(alignment: .center) {
                 VStack(alignment: .leading) {
-                    Text(vm.product.displayName)
+                    Text(product.displayName)
                         .font(.title2)
                         .multilineTextAlignment(.leading)
                         .fontWeight(.semibold)
@@ -27,7 +28,7 @@ struct ProductView: View {
                         .fontDesign(.rounded)
                         .foregroundStyle(.white)
                     
-                    Text(vm.product.description)
+                    Text(product.description)
                         .multilineTextAlignment(.leading)
                         .fontWeight(.regular)
                         .padding(.leading)
@@ -39,9 +40,9 @@ struct ProductView: View {
                 Spacer()
                 
                 Button {
-                    vm.purchase()
+                    vm.purchase(product: product)
                 } label: {
-                    Text(vm.product.displayPrice)
+                    Text(product.displayPrice)
                         .fontWeight(.bold)
                         .font(.headline)
                         .fontDesign(.rounded)
@@ -59,31 +60,7 @@ struct ProductView: View {
 }
 
 
-
-//    @State var storeManager = StoreManager()
-//    @State var product: Product?
-//    @State var vm = ProductViewModel(storeManager: storeManager, product: product!)
-//    return ProductView(vm: vm)
-//        .task {
-//            await storeManager.retrieveProducts()
-//        }
-    
-    
-
-
-struct ProductView_Preview: PreviewProvider {
-    @StateObject static var storeManager = StoreManager()
-    @State static var product: Product?
-    
-    
-    static var previews: some View {
-        Group {
-            if let product {
-                ProductView(vm: ProductViewModel(storeManager: storeManager, product: product))
-            }
-        }
-        .task {
-            product = try! await storeManager.getTestProduct()
-        }
-    }
+#Preview {
+    ProductListView()
+        .environmentObject(StoreViewModel())
 }

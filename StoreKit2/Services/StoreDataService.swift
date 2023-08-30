@@ -1,5 +1,5 @@
 //
-//  StoreManager.swift
+//  StoreDataService.swift
 //  StoreKit2
 //
 //  Created by Jordan Calhoun on 8/28/23.
@@ -7,7 +7,6 @@
 
 import Foundation
 import StoreKit
-import Observation
 
 enum StoreKitError: Error {
     case failedVerification
@@ -29,10 +28,11 @@ protocol StoreKitManageable {
     func transactionStatusStream() -> Task<Void, Error>
 }
 
-@Observable
-class StoreManager: StoreKitManageable, ObservableObject {
-    private(set) var products = [Product]()
-    var transactionCompletionStatus: Bool = false
+
+class StoreDataService: StoreKitManageable, ObservableObject {
+    @Published private(set) var products: [Product] = []
+    @Published private(set) var purchasedProducts: [Product] = []
+    @Published var transactionCompletionStatus: Bool = false
     
     private let productsIds = ["nonconsumable.lifetime", "consumable.week", "subscription.yearly"]
     private(set) var purchaseStatus: PurchaseStatus = .unknown
@@ -63,19 +63,9 @@ class StoreManager: StoreKitManageable, ObservableObject {
         }
     }
     
-    ///For testing previews
-    func getTestProduct() async throws -> Product {
-        do {
-            let products = try await Product.products(for: productsIds)
-            
-            if (products.first != nil) {
-                return products.first!
-            }else {
-                throw(StoreKitError.unknownError)
-            }
-        } catch {
-            throw(error)
-        }
+    /// Set purchased products
+    func retrievePurchasedProducts() async {
+        // do some work
     }
     
     /// Make a purchase

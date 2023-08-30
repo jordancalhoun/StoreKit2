@@ -9,7 +9,7 @@ import SwiftUI
 import StoreKit
 
 struct ProductListView: View {
-    @EnvironmentObject private var storeManager: StoreManager
+    @EnvironmentObject var vm: StoreViewModel
     
     var body: some View {
         VStack {
@@ -18,8 +18,8 @@ struct ProductListView: View {
                 .fontWeight(.heavy)
                 .padding()
             
-            List(storeManager.products) { product in
-                ProductView(vm: ProductViewModel(storeManager: storeManager, product: product))
+            List(vm.products) { product in
+                ProductView(product: product)
                     .listRowSeparator(.hidden)
             }
             .listStyle(PlainListStyle())
@@ -31,5 +31,5 @@ struct ProductListView: View {
 
 #Preview {
     ProductListView()
-        .environmentObject(StoreManager())
+        .environmentObject(StoreViewModel())
 }
