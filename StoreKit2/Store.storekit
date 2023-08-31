@@ -39,8 +39,8 @@
       "internalID" : "67707CF0",
       "localizations" : [
         {
-          "description" : "Unloack all feature of this app for one week.",
-          "displayName" : "Weekly Access",
+          "description" : "Unlock app for one week at a time.",
+          "displayName" : "Weekly Access Token",
           "locale" : "en_US"
         }
       ],
@@ -50,7 +50,8 @@
     }
   ],
   "settings" : {
-    "_failTransactionsEnabled" : false,
+    "_askToBuyEnabled" : false,
+    "_failTransactionsEnabled" : true,
     "_locale" : "en_US",
     "_storefront" : "USA",
     "_storeKitErrors" : [
@@ -60,8 +61,11 @@
         "name" : "Load Products"
       },
       {
-        "current" : null,
-        "enabled" : false,
+        "current" : {
+          "index" : 2,
+          "type" : "generic"
+        },
+        "enabled" : true,
         "name" : "Purchase"
       },
       {

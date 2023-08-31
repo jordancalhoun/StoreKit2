@@ -28,7 +28,7 @@ typealias RenewalState = StoreKit.Product.SubscriptionInfo.RenewalState
 protocol StoreKitManageable {
     // TODO: Update with new methods
     func retrieveProducts() async
-    func purchase(_ product: Product) async
+    func purchase(_ product: Product) async -> Bool
     func verifyPurchase<T>(_ verificationResult: VerificationResult<T>) throws -> T
     func transactionStatusStream() -> Task<Void, Error>
 }
@@ -123,18 +123,28 @@ class StoreDataService: StoreKitManageable, ObservableObject {
                 // Verify transaction
                 let transaction = try verifyPurchase(verificationResult)
                 
-                guard let product = products.first(where: { $0.id == transaction.productID }) else {
-                    // Transaction product is not in our list of products offered.
-                    return
-                }
+                print("Retrieved:: \(transaction.productID)")
                                 
                 // Check the product type and assign to correct array.
-                switch product.type {
+                switch transaction.productType {
                 case .nonConsumable:
+                    guard let product = products.first(where: { $0.id == transaction.productID }) else {
+                        // Transaction product is not in our list of products offered.
+                        return
+                    }
                     purchasedNonConsumables.append(product)
+                // TODO: This will never be a product in 'currentEntitlements'
                 case .consumable:
+                    guard let product = products.first(where: { $0.id == transaction.productID }) else {
+                        // Transaction product is not in our list of products offered.
+                        return
+                    }
                     purchasedConsumables.append(product)
                 case .nonRenewable:
+                    guard let product = products.first(where: { $0.id == transaction.productID }) else {
+                        // Transaction product is not in our list of products offered.
+                        return
+                    }
                     // Note about nonRenewable experation dates from Apple:
                     /*
                      Non-renewing subscriptions have no inherent expiration date, so they're always
@@ -155,6 +165,10 @@ class StoreDataService: StoreKitManageable, ObservableObject {
                         purchasedNonRenewables.append(product)
                     }
                 case .autoRenewable:
+                    guard let product = subscriptions.first(where: { $0.id == transaction.productID }) else {
+                        // Transaction product is not in our list of products offered.
+                        return
+                    }
                     purchasedAutoRenewables.append(product)
                 default:
                     // Product type is none of the above.
@@ -183,7 +197,7 @@ class StoreDataService: StoreKitManageable, ObservableObject {
     }
     
     /// Make a purchase
-    func purchase(_ product: Product) async {
+    func purchase(_ product: Product) async -> Bool {
         do {
             let result = try await product.purchase()
             
@@ -194,30 +208,39 @@ class StoreDataService: StoreKitManageable, ObservableObject {
                     let verificationResult = try verifyPurchase(verification)
                     purchaseStatus = .success(verificationResult.productID)
                     
+                    await self.retrievePurchasedProducts()
+                    
                     await verificationResult.finish()
                     transactionCompletionStatus = true
+                    return true
                 } catch {
                     purchaseStatus = .failed(error)
                     transactionCompletionStatus = false
+                    return false
                 }
             case .pending:
                 print("Transaction is pending for user action related to the account")
                 purchaseStatus = .pending
                 transactionCompletionStatus = false
+                return false
             case .userCancelled:
                 print("User cancelled the transaction")
                 purchaseStatus = .cancelled
                 transactionCompletionStatus = false
+                return false
             default:
                 print("Unknown error occured")
                 purchaseStatus = .failed(StoreKitError.unknownError)
                 transactionCompletionStatus = false
+                return false
             }
         } catch {
             print(error)
             purchaseStatus = .failed(error)
             transactionCompletionStatus = false
+            return false
         }
+        
     }
     
     /// Verify the purchase

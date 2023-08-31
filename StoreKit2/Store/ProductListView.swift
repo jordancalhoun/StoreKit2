@@ -10,6 +10,7 @@ import StoreKit
 
 struct ProductListView: View {
     @EnvironmentObject var vm: StoreViewModel
+    @Binding var showingStore: Bool
     
     var body: some View {
         VStack {
@@ -32,6 +33,14 @@ struct ProductListView: View {
                         .listRowSeparator(.hidden)
                 }
                 
+                Button("Restore Purchases", action: {
+                    Task {
+                        //This call displays a system prompt that asks users to authenticate with their App Store credentials.
+                        //Call this function only in response to an explicit user action, such as tapping a button.
+                        try? await AppStore.sync()
+                    }
+                })
+                
             }
             .listStyle(PlainListStyle())
             .listRowBackground(Color.clear)
@@ -42,6 +51,6 @@ struct ProductListView: View {
 }
 
 #Preview {
-    ProductListView()
+    ProductListView(showingStore: .constant(true))
         .environmentObject(StoreViewModel())
 }

@@ -20,7 +20,6 @@ class StoreViewModel: ObservableObject {
     @MainActor @Published private(set) var purchasedAutoRenewables: [Product] = []
     
     private let storeDataService = StoreDataService()
-//    private var cancellables = Set<AnyCancellable>()
     
     init() {
         self.addSubscribers()
@@ -74,53 +73,17 @@ class StoreViewModel: ObservableObject {
                 }
             }
         }
-//        storeDataService.$products
-//            .sink { (products) in
-//                self.products = products
-//            }
-//            .store(in: &cancellables)
-//        
-//        storeDataService.$subscriptions
-//            .sink { (subscriptions) in
-//                self.subscriptions = subscriptions
-//            }
-//            .store(in: &cancellables)
-//        
-//        storeDataService.$purchasedNonConsumables
-//            .sink { (purchasedNonConsumables) in
-//                self.purchasedNonConsumables = purchasedNonConsumables
-//            }
-//            .store(in: &cancellables)
-//        
-//        storeDataService.$purchasedConsumables
-//            .sink { (purchasedConsumables) in
-//                self.purchasedConsumables = purchasedConsumables
-//            }
-//            .store(in: &cancellables)
-//        
-//        storeDataService.$purchasedNonRenewables
-//            .sink { (purchasedNonRewables) in
-//                self.purchasedNonRenewables = purchasedNonRewables
-//            }
-//            .store(in: &cancellables)
-//        
-//        storeDataService.$purchasedAutoRenewables
-//            .sink { (purchasedAutoRenewables) in
-//                self.purchasedAutoRenewables = purchasedAutoRenewables
-//            }
-//            .store(in: &cancellables)
     }
     
-    func purchase(product: Product) {
-        Task {
-            await storeDataService.purchase(product)
-        }
+    func purchase(product: Product) async -> Bool {
+        return await storeDataService.purchase(product)
     }
     
     @MainActor func isPurchased(_ product: Product) -> Bool {
-        print("verifing purchase for \(product.id)")
+        print("VM::Verifing purchase for: \(product.id)")
         switch product.type {
         case .nonConsumable:
+            print("Nonconsumable count: \(purchasedNonRenewables.count)")
             return purchasedNonConsumables.contains(where: { $0.id == product.id })
         case .consumable:
             return purchasedConsumables.contains(where: { $0.id == product.id })

@@ -45,6 +45,7 @@ struct ProductView: View {
                 buyButton
                     .buttonStyle(BuyButtonStyle(isPurchased: isPurchased))
                     .padding()
+                    .disabled(isPurchased)
                 
                 
             }
@@ -54,7 +55,7 @@ struct ProductView: View {
 
 
 #Preview {
-    ProductListView()
+    ProductListView(showingStore: .constant(true))
         .environmentObject(StoreViewModel())
 }
 
@@ -62,7 +63,13 @@ struct ProductView: View {
 extension ProductView {
     var buyButton: some View {
         Button(action: {
-            vm.purchase(product: product)
+            Task {
+                if await vm.purchase(product: product) {
+                    withAnimation {
+                        isPurchased = true
+                    }
+                }
+            }
         }) {
             if isPurchased {
                 Text(Image(systemName: "checkmark"))

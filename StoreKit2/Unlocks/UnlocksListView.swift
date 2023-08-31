@@ -18,14 +18,16 @@ struct UnlocksListView: View {
     var body: some View {
         VStack {
             List {
-                Text("Purchase Pro to access these features.")
+                Text("Store")
                     .onTapGesture {
                         showingStore.toggle()
                     }
                     .sheet(isPresented: $showingStore, content: {
-                        ProductListView()
-                            .environmentObject(store)
+                        ProductListView(showingStore: $showingStore)
                     })
+                
+                Text("Consumables are not fully implemented.  This implementation is usually dependent on the setup of each app specificially, so it's skipped here.")
+                
             }
         }
     }
@@ -35,23 +37,4 @@ struct UnlocksListView: View {
 #Preview {
     UnlocksListView(vm: UnlocksViewModel())
         .environmentObject(StoreViewModel())
-}
-
-extension UnlocksListView {
-    private var proFeatures: some View {
-        Section {
-            Picker("Pro Feature 1", selection: $proFeature1) {
-                Text("Option 1").tag("Option 1")
-                Text("Option 2").tag("Option 2")
-
-            }
-            .disabled(disableProFeature1)
-            
-            Toggle("Pro Feature 2", isOn: $disableProFeature1)
-        } header: {
-            Text("Lifetime Pro Features")
-        } footer: {
-            Text("These features are unlocked when the lifetime Pro is purchased.")
-        }
-    }
 }
