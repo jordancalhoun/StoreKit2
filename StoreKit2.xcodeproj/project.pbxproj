@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9EA70EE92AA0D68300A925AF /* BuyButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA70EE82AA0D68300A925AF /* BuyButtonStyle.swift */; };
 		9ED448942A9CE9840095A160 /* StoreKit2App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ED448932A9CE9840095A160 /* StoreKit2App.swift */; };
 		9ED448962A9CE9840095A160 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ED448952A9CE9840095A160 /* ContentView.swift */; };
 		9ED448982A9CE9850095A160 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9ED448972A9CE9850095A160 /* Assets.xcassets */; };
@@ -21,6 +22,7 @@
 
 /* Begin PBXFileReference section */
 		9EA70EE72AA0C26D00A925AF /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		9EA70EE82AA0D68300A925AF /* BuyButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuyButtonStyle.swift; sourceTree = "<group>"; };
 		9ED448902A9CE9840095A160 /* StoreKit2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StoreKit2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9ED448932A9CE9840095A160 /* StoreKit2App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKit2App.swift; sourceTree = "<group>"; };
 		9ED448952A9CE9840095A160 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -92,6 +94,7 @@
 				9ED448A92A9CF3F50095A160 /* StoreViewModel.swift */,
 				9ED448AD2A9CF73D0095A160 /* ProductView.swift */,
 				9ED448AF2A9D02CA0095A160 /* ProductListView.swift */,
+				9EA70EE82AA0D68300A925AF /* BuyButtonStyle.swift */,
 			);
 			path = Store;
 			sourceTree = "<group>";
@@ -187,6 +190,7 @@
 				9ED448B72A9D0A200095A160 /* UnlocksListView.swift in Sources */,
 				9ED448AA2A9CF3F50095A160 /* StoreViewModel.swift in Sources */,
 				9ED448A72A9CED380095A160 /* StoreDataService.swift in Sources */,
+				9EA70EE92AA0D68300A925AF /* BuyButtonStyle.swift in Sources */,
 				9ED448962A9CE9840095A160 /* ContentView.swift in Sources */,
 				9ED448B52A9D085C0095A160 /* UnlocksViewModel.swift in Sources */,
 				9ED448942A9CE9840095A160 /* StoreKit2App.swift in Sources */,

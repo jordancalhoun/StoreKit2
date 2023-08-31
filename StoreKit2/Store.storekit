@@ -1,7 +1,21 @@
 {
   "identifier" : "3899A6EA",
   "nonRenewingSubscriptions" : [
-
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "E626E5F1",
+      "localizations" : [
+        {
+          "description" : "Provides one year of access to all features",
+          "displayName" : "One Year Access",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "nonrenewable.year",
+      "referenceName" : "One Year of Access",
+      "type" : "NonRenewingSubscription"
+    }
   ],
   "products" : [
     {
@@ -102,7 +116,7 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "2.99",
+          "displayPrice" : "2.75",
           "familyShareable" : true,
           "groupNumber" : 1,
           "internalID" : "053EC74A",

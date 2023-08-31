@@ -18,19 +18,14 @@ struct UnlocksListView: View {
     var body: some View {
         VStack {
             List {
-                if !store.purchasedProducts.isEmpty {
-                    proFeatures
-                } else {
-                    Text("Purchase Pro to access these features.")
-                        .onTapGesture {
-                            showingStore.toggle()
-                        }
-                        .sheet(isPresented: $showingStore, content: {
-                            ProductListView()
-                                .environmentObject(store)
-                        })
-                }
-                
+                Text("Purchase Pro to access these features.")
+                    .onTapGesture {
+                        showingStore.toggle()
+                    }
+                    .sheet(isPresented: $showingStore, content: {
+                        ProductListView()
+                            .environmentObject(store)
+                    })
             }
         }
     }

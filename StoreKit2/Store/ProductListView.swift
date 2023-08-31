@@ -13,18 +13,30 @@ struct ProductListView: View {
     
     var body: some View {
         VStack {
-            Text("Packages")
-                .font(.largeTitle)
-                .fontWeight(.heavy)
-                .padding()
-            
-            List(vm.products) { product in
-                ProductView(product: product)
-                    .listRowSeparator(.hidden)
+            List {
+                Text("Products")
+                    .font(.title)
+                    .fontWeight(.heavy)
+                    .padding()
+                ForEach(vm.products, id: \.self) { product in
+                    ProductView(product: product)
+                        .listRowSeparator(.hidden)
+                }
+                
+                Text("Subscriptions")
+                    .font(.title)
+                    .fontWeight(.heavy)
+                    .padding()
+                ForEach(vm.subscriptions, id: \.self) { subscription in
+                    ProductView(product: subscription)
+                        .listRowSeparator(.hidden)
+                }
+                
             }
             .listStyle(PlainListStyle())
             .listRowBackground(Color.clear)
             .scrollContentBackground(.hidden)
+
         }
     }
 }

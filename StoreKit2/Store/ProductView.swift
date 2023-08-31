@@ -12,11 +12,14 @@ import StoreKit
 struct ProductView: View {
     @EnvironmentObject var vm: StoreViewModel
     let product: Product
+    @State var isPurchased: Bool = true
     
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 25, style: .continuous)
-                .fill(LinearGradient(gradient: Gradient(colors: [.pink, .purple, .blue]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                .fill(LinearGradient(gradient: Gradient(colors: [.indigo, .purple]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                .shadow(radius: 5)
+                
             
             HStack(alignment: .center) {
                 VStack(alignment: .leading) {
@@ -39,23 +42,13 @@ struct ProductView: View {
                 
                 Spacer()
                 
-                Button {
-                    vm.purchase(product: product)
-                } label: {
-                    Text(product.displayPrice)
-                        .fontWeight(.bold)
-                        .font(.headline)
-                        .fontDesign(.rounded)
-                        .foregroundStyle(.white)
-                }
-                .tint(.teal)
-                .buttonStyle(.borderedProminent)
-                .padding()
-                .font(.title3)
+                buyButton
+                    .buttonStyle(BuyButtonStyle(isPurchased: isPurchased))
+                    .padding()
                 
                 
             }
-        }
+        }.padding([.top, .bottom], 6)
     }
 }
 
@@ -63,4 +56,33 @@ struct ProductView: View {
 #Preview {
     ProductListView()
         .environmentObject(StoreViewModel())
+}
+
+
+extension ProductView {
+    var buyButton: some View {
+        Button(action: {
+            vm.purchase(product: product)
+        }) {
+            if isPurchased {
+                Text(Image(systemName: "checkmark"))
+                    .bold()
+                    .foregroundStyle(.white)
+            } else {
+                if product.subscription != nil {
+                    Text("Subscribe")
+                        .bold()
+                        .foregroundStyle(.white)
+                } else {
+                    Text(product.displayPrice)
+                        .foregroundStyle(.white)
+                        .bold()
+                }
+            }
+        }
+        .onAppear {
+            self.isPurchased = vm.isPurchased(product)
+        }
+    }
+
 }
