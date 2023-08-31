@@ -33,31 +33,41 @@ class StoreViewModel: ObservableObject {
                     self.products = value
                 }
             }
-            
+        }
+         
+        Task {
             for await value in storeDataService.$subscriptions.values {
                 await MainActor.run {
                     self.subscriptions = value
                 }
             }
-            
+        }
+        
+        Task {
             for await value in storeDataService.$purchasedConsumables.values {
                 await MainActor.run {
                     self.purchasedConsumables = value
                 }
             }
-            
+        }
+        
+        Task {
             for await value in storeDataService.$purchasedNonConsumables.values {
                 await MainActor.run {
                     self.purchasedNonConsumables = value
                 }
             }
+        }
             
+        Task {
             for await value in storeDataService.$purchasedNonRenewables.values {
                 await MainActor.run {
                     self.purchasedNonRenewables = value
                 }
             }
+        }
             
+        Task {
             for await value in storeDataService.$purchasedAutoRenewables.values {
                 await MainActor.run {
                     self.purchasedAutoRenewables = value
