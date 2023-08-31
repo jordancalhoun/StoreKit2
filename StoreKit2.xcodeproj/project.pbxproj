@@ -66,7 +66,7 @@
 		9ED448922A9CE9840095A160 /* StoreKit2 */ = {
 			isa = PBXGroup;
 			children = (
-				9ED448B12A9D082D0095A160 /* Movie */,
+				9ED448B12A9D082D0095A160 /* Unlocks */,
 				9ED448A82A9CF3E00095A160 /* Services */,
 				9ED448A52A9CED290095A160 /* Store */,
 				9ED448A12A9CE9D70095A160 /* Store.storekit */,
@@ -104,13 +104,13 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
-		9ED448B12A9D082D0095A160 /* Movie */ = {
+		9ED448B12A9D082D0095A160 /* Unlocks */ = {
 			isa = PBXGroup;
 			children = (
 				9ED448B42A9D085C0095A160 /* UnlocksViewModel.swift */,
 				9ED448B62A9D0A200095A160 /* UnlocksListView.swift */,
 			);
-			path = Movie;
+			path = Unlocks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
