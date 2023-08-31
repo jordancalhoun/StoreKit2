@@ -11,58 +11,94 @@ import Combine
 
 
 class StoreViewModel: ObservableObject {
-    @Published private(set) var products: [Product] = []
-    @Published private(set) var subscriptions: [Product] = []
+    @MainActor @Published private(set) var products: [Product] = []
+    @MainActor @Published private(set) var subscriptions: [Product] = []
     
-    @Published private(set) var purchasedNonConsumables: [Product] = []
-    @Published private(set) var purchasedConsumables: [Product] = []
-    @Published private(set) var purchasedNonRenewables: [Product] = []
-    @Published private(set) var purchasedAutoRenewables: [Product] = []
+    @MainActor @Published private(set) var purchasedNonConsumables: [Product] = []
+    @MainActor @Published private(set) var purchasedConsumables: [Product] = []
+    @MainActor @Published private(set) var purchasedNonRenewables: [Product] = []
+    @MainActor @Published private(set) var purchasedAutoRenewables: [Product] = []
     
     private let storeDataService = StoreDataService()
-    private var cancellables = Set<AnyCancellable>()
+//    private var cancellables = Set<AnyCancellable>()
     
     init() {
         self.addSubscribers()
     }
     
-    // I am not sure if there is a better way to do this.
     func addSubscribers() {
-        storeDataService.$products
-            .sink { (products) in
-                self.products = products
+        Task {
+            for await value in storeDataService.$products.values {
+                await MainActor.run {
+                    self.products = value
+                }
             }
-            .store(in: &cancellables)
-        
-        storeDataService.$subscriptions
-            .sink { (subscriptions) in
-                self.subscriptions = subscriptions
+            
+            for await value in storeDataService.$subscriptions.values {
+                await MainActor.run {
+                    self.subscriptions = value
+                }
             }
-            .store(in: &cancellables)
-        
-        storeDataService.$purchasedNonConsumables
-            .sink { (purchasedNonConsumables) in
-                self.purchasedNonConsumables = purchasedNonConsumables
+            
+            for await value in storeDataService.$purchasedConsumables.values {
+                await MainActor.run {
+                    self.purchasedConsumables = value
+                }
             }
-            .store(in: &cancellables)
-        
-        storeDataService.$purchasedConsumables
-            .sink { (purchasedConsumables) in
-                self.purchasedConsumables = purchasedConsumables
+            
+            for await value in storeDataService.$purchasedNonConsumables.values {
+                await MainActor.run {
+                    self.purchasedNonConsumables = value
+                }
             }
-            .store(in: &cancellables)
-        
-        storeDataService.$purchasedNonRenewables
-            .sink { (purchasedNonRewables) in
-                self.purchasedNonRenewables = purchasedNonRewables
+            
+            for await value in storeDataService.$purchasedNonRenewables.values {
+                await MainActor.run {
+                    self.purchasedNonRenewables = value
+                }
             }
-            .store(in: &cancellables)
-        
-        storeDataService.$purchasedAutoRenewables
-            .sink { (purchasedAutoRenewables) in
-                self.purchasedAutoRenewables = purchasedAutoRenewables
+            
+            for await value in storeDataService.$purchasedAutoRenewables.values {
+                await MainActor.run {
+                    self.purchasedAutoRenewables = value
+                }
             }
-            .store(in: &cancellables)
+        }
+//        storeDataService.$products
+//            .sink { (products) in
+//                self.products = products
+//            }
+//            .store(in: &cancellables)
+//        
+//        storeDataService.$subscriptions
+//            .sink { (subscriptions) in
+//                self.subscriptions = subscriptions
+//            }
+//            .store(in: &cancellables)
+//        
+//        storeDataService.$purchasedNonConsumables
+//            .sink { (purchasedNonConsumables) in
+//                self.purchasedNonConsumables = purchasedNonConsumables
+//            }
+//            .store(in: &cancellables)
+//        
+//        storeDataService.$purchasedConsumables
+//            .sink { (purchasedConsumables) in
+//                self.purchasedConsumables = purchasedConsumables
+//            }
+//            .store(in: &cancellables)
+//        
+//        storeDataService.$purchasedNonRenewables
+//            .sink { (purchasedNonRewables) in
+//                self.purchasedNonRenewables = purchasedNonRewables
+//            }
+//            .store(in: &cancellables)
+//        
+//        storeDataService.$purchasedAutoRenewables
+//            .sink { (purchasedAutoRenewables) in
+//                self.purchasedAutoRenewables = purchasedAutoRenewables
+//            }
+//            .store(in: &cancellables)
     }
     
     func purchase(product: Product) {
@@ -71,7 +107,7 @@ class StoreViewModel: ObservableObject {
         }
     }
     
-    func isPurchased(_ product: Product) -> Bool {
+    @MainActor func isPurchased(_ product: Product) -> Bool {
         print("verifing purchase for \(product.id)")
         switch product.type {
         case .nonConsumable:
