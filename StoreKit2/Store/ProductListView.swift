@@ -28,7 +28,9 @@ struct ProductListView: View {
             .listStyle(PlainListStyle())
             .listRowBackground(Color.clear)
             .scrollContentBackground(.hidden)
-
+        }
+        .alert(vm.alertMessage, isPresented: $vm.isAlertShowing) {
+            Button("OK", role: .cancel) { }
         }
     }
 }

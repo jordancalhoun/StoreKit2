@@ -7,20 +7,32 @@
 
 import Foundation
 import StoreKit
-import Combine
-
 
 class StoreViewModel: ObservableObject {
-    // Product from the store
-    @MainActor @Published private(set) var nonConsumables: [Product] = []
-    @MainActor @Published private(set) var consumables: [Product] = []
-    @MainActor @Published private(set) var nonRenewables: [Product] = []
-    @MainActor @Published private(set) var autoRenewables: [Product] = []
+    @Published private(set) var nonConsumables: [Product] = []
+    @Published private(set) var consumables: [Product] = []
+    @Published private(set) var nonRenewables: [Product] = []
+    @Published private(set) var autoRenewables: [Product] = []
     
-    @MainActor @Published private(set) var purchasedNonConsumables: [Product] = []
-    @MainActor @Published private(set) var purchasedConsumables: [Product] = []
-    @MainActor @Published private(set) var purchasedNonRenewables: [Product] = []
-    @MainActor @Published private(set) var purchasedAutoRenewables: [Product] = []
+    @Published private(set) var purchasedNonConsumables: [Product] = []
+    @Published private(set) var purchasedNonRenewables: [Product] = []
+    @Published private(set) var purchasedAutoRenewables: [Product] = []
+    
+    @Published private(set) var purchaseStatus: PurchaseStatus = .unknown {
+        didSet {
+            // Alert the user if there is an eror purchasing
+            switch purchaseStatus {
+            case .failed(let error):
+                alertMessage = "There was an error completing your purchase: \(error.localizedDescription)."
+                isAlertShowing = true
+            default:
+                return
+            }
+        }
+    }
+    
+    @Published var isAlertShowing: Bool = false
+    @Published var alertMessage: String = ""
     
     private let storeDataService = StoreDataService()
     
@@ -62,14 +74,6 @@ class StoreViewModel: ObservableObject {
         }
         
         Task {
-            for await value in storeDataService.$purchasedConsumables.values {
-                await MainActor.run {
-                    self.purchasedConsumables = value
-                }
-            }
-        }
-        
-        Task {
             for await value in storeDataService.$purchasedNonConsumables.values {
                 await MainActor.run {
                     self.purchasedNonConsumables = value
@@ -92,18 +96,26 @@ class StoreViewModel: ObservableObject {
                 }
             }
         }
+        
+        Task {
+            for await value in storeDataService.$purchaseStatus.values {
+                await MainActor.run {
+                    self.purchaseStatus = value
+                }
+            }
+        }
     }
     
-    func purchase(product: Product) async -> Bool {
-        return await storeDataService.purchase(product)
+    func purchase(product: Product)  {
+        Task {
+            await storeDataService.purchase(product)
+        }
     }
     
-    @MainActor func isPurchased(_ product: Product) -> Bool {
+    func isPurchased(_ product: Product) -> Bool {
         switch product.type {
         case .nonConsumable:
             return purchasedNonConsumables.contains(where: { $0.id == product.id })
-        case .consumable:
-            return purchasedConsumables.contains(where: { $0.id == product.id })
         case .nonRenewable:
             return purchasedNonRenewables.contains(where: { $0.id == product.id })
         case .autoRenewable:

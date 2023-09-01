@@ -34,7 +34,6 @@ class StoreDataService: ObservableObject {
     
     // Purchased products from the store
     @Published private(set) var purchasedNonConsumables: [Product] = []
-    @Published private(set) var purchasedConsumables: [Product] = []
     @Published private(set) var purchasedNonRenewables: [Product] = []
     @Published private(set) var purchasedAutoRenewables: [Product] = []
     @Published private(set) var subscriptionGroupStatus: RenewalState?
@@ -48,8 +47,9 @@ class StoreDataService: ObservableObject {
         "nonrenewable.year"
     ]
     
-    /// Used for educational purposes
-    private(set) var purchaseStatus: PurchaseStatus = .unknown {
+    
+    @Published private(set) var purchaseStatus: PurchaseStatus = .unknown {
+        // Used for educational purposes
         didSet {
             print("--------------------")
             print("Purchase Status: \(purchaseStatus)")
@@ -115,7 +115,6 @@ class StoreDataService: ObservableObject {
     @MainActor
     func retrievePurchasedProducts() async {
         var purchasedNonConsumables: [Product] = []
-        var purchasedConsumables: [Product] = []
         var purchasedNonRenewables: [Product] = []
         var purchasedAutoRenewables: [Product] = []
         
@@ -135,13 +134,6 @@ class StoreDataService: ObservableObject {
                         return
                     }
                     purchasedNonConsumables.append(product)
-                // TODO: This will never be a product in 'currentEntitlements'
-                case .consumable:
-                    guard let product = consumables.first(where: { $0.id == transaction.productID }) else {
-                        // Transaction product is not in our list of products offered.
-                        return
-                    }
-                    purchasedConsumables.append(product)
                 case .nonRenewable:
                     guard let product = nonRenewables.first(where: { $0.id == transaction.productID }) else {
                         // Transaction product is not in our list of products offered.
@@ -184,7 +176,6 @@ class StoreDataService: ObservableObject {
         
         // Update store with purchased products
         self.purchasedNonConsumables = purchasedNonConsumables
-        self.purchasedConsumables = purchasedConsumables
         self.purchasedNonRenewables = purchasedNonRenewables
         self.purchasedAutoRenewables = purchasedAutoRenewables
         
@@ -199,7 +190,7 @@ class StoreDataService: ObservableObject {
     }
     
     /// Make a purchase
-    func purchase(_ product: Product) async -> Bool {
+    func purchase(_ product: Product) async {
         do {
             let result = try await product.purchase()
             
@@ -212,7 +203,6 @@ class StoreDataService: ObservableObject {
                     await verificationResult.finish()
                     
                     purchaseStatus = .success(verificationResult.productID)
-                    return true
                 } catch {
                     purchaseStatus = .failed(error)
                 }
@@ -223,13 +213,9 @@ class StoreDataService: ObservableObject {
             default:
                 purchaseStatus = .failed(StoreKitError.unknownError)
             }
-            
-            return false
         } catch {
             purchaseStatus = .failed(error)
-            return false
         }
-        
     }
     
     /// Verify the purchase

@@ -6,11 +6,8 @@
 //
 
 import Foundation
+import Observation
 
-class UnlocksViewModel: ObservableObject {
-
-    private(set) var status: String?
-    var transactionStatus: Bool = false
-
-
+@Observable
+class UnlocksViewModel {
 }

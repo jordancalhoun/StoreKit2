@@ -11,8 +11,8 @@ import StoreKit
 
 struct ProductView: View {
     @EnvironmentObject var vm: StoreViewModel
+    @State var isPurchased: Bool = true    
     let product: Product
-    @State var isPurchased: Bool = true
     
     var body: some View {
         ZStack {
@@ -63,13 +63,7 @@ struct ProductView: View {
 extension ProductView {
     var buyButton: some View {
         Button(action: {
-            Task {
-                if await vm.purchase(product: product) {
-                    withAnimation {
-                        isPurchased = true
-                    }
-                }
-            }
+            vm.purchase(product: product)
         }) {
             if isPurchased {
                 Text(Image(systemName: "checkmark"))
@@ -89,6 +83,13 @@ extension ProductView {
         }
         .onAppear {
             self.isPurchased = vm.isPurchased(product)
+        }
+        .onChange(of: [vm.purchasedAutoRenewables,
+                       vm.purchasedNonConsumables,
+                       vm.purchasedNonRenewables]) {
+            withAnimation {
+                self.isPurchased = vm.isPurchased(product)
+            }
         }
     }
 

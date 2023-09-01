@@ -51,7 +51,7 @@
   ],
   "settings" : {
     "_askToBuyEnabled" : false,
-    "_failTransactionsEnabled" : true,
+    "_failTransactionsEnabled" : false,
     "_locale" : "en_US",
     "_storefront" : "USA",
     "_storeKitErrors" : [
@@ -65,7 +65,7 @@
           "index" : 2,
           "type" : "generic"
         },
-        "enabled" : true,
+        "enabled" : false,
         "name" : "Purchase"
       },
       {
@@ -94,12 +94,18 @@
         "name" : "Manage Subscriptions Sheet"
       },
       {
-        "current" : null,
+        "current" : {
+          "index" : 0,
+          "type" : "refund request"
+        },
         "enabled" : false,
         "name" : "Refund Request Sheet"
       },
       {
-        "current" : null,
+        "current" : {
+          "index" : 4,
+          "type" : "generic"
+        },
         "enabled" : false,
         "name" : "Offer Code Redeem Sheet"
       }

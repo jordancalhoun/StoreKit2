@@ -8,11 +8,8 @@
 import SwiftUI
 
 struct UnlocksListView: View {
-    @State var vm: UnlocksViewModel
     @EnvironmentObject var store: StoreViewModel
-    
-    @State var proFeature1: String = ""
-    @State var disableProFeature1: Bool = false
+    @State var vm: UnlocksViewModel
     @State var showingStore: Bool = false
     
     var body: some View {
