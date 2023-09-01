@@ -67,8 +67,14 @@ extension UnlocksListView {
     }
     
     var todos: some View {
-        ForEach(["Store consumables into AppStorage", "Add Promo Code Fields", "Setup Cancelation/Refund buttons"], id: \.self) {
-            Text("• \($0)")
+        let todos = [
+            "Store consumables into AppStorage",
+            "Add Promo Code Fields",
+            "Setup Cancelation/Refund buttons",
+            "Show pending purchase states"
+        ]
+        return ForEach(todos, id: \.self) {
+            Text("- \($0)")
         }
     }
     
