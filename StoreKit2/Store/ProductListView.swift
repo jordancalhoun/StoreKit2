@@ -15,32 +15,15 @@ struct ProductListView: View {
     var body: some View {
         VStack {
             List {
-                Text("Products")
-                    .font(.title)
-                    .fontWeight(.heavy)
-                    .padding()
-                ForEach(vm.products, id: \.self) { product in
-                    ProductView(product: product)
-                        .listRowSeparator(.hidden)
-                }
+                categoryGroup(title: "NonConsumables", products: vm.nonConsumables)
                 
-                Text("Subscriptions")
-                    .font(.title)
-                    .fontWeight(.heavy)
-                    .padding()
-                ForEach(vm.subscriptions, id: \.self) { subscription in
-                    ProductView(product: subscription)
-                        .listRowSeparator(.hidden)
-                }
+                categoryGroup(title: "Consumables", products: vm.consumables)
                 
-                Button("Restore Purchases", action: {
-                    Task {
-                        //This call displays a system prompt that asks users to authenticate with their App Store credentials.
-                        //Call this function only in response to an explicit user action, such as tapping a button.
-                        try? await AppStore.sync()
-                    }
-                })
+                categoryGroup(title: "NonRenewables", products: vm.nonRenewables)
                 
+                categoryGroup(title: "AutoRnewables", products: vm.autoRenewables)
+                
+                restorePurchases
             }
             .listStyle(PlainListStyle())
             .listRowBackground(Color.clear)
@@ -53,4 +36,30 @@ struct ProductListView: View {
 #Preview {
     ProductListView(showingStore: .constant(true))
         .environmentObject(StoreViewModel())
+}
+
+extension ProductListView {
+    private func categoryGroup(title: String, products: [Product]) -> some View{
+        return Group {
+            Text(title)
+                .font(.title)
+                .fontWeight(.heavy)
+            
+            ForEach(products, id: \.self) { product in
+                ProductView(product: product)
+                    .listRowSeparator(.hidden)
+            }
+            .padding(.bottom)
+        }
+    }
+    
+    var restorePurchases: some View {
+        Button("Restore Purchases", action: {
+            Task {
+                //This call displays a system prompt that asks users to authenticate with their App Store credentials.
+                //Call this function only in response to an explicit user action, such as tapping a button.
+                try? await AppStore.sync()
+            }
+        })
+    }
 }

@@ -25,36 +25,39 @@ typealias Transaction = StoreKit.Transaction
 typealias RenewalInfo = StoreKit.Product.SubscriptionInfo.RenewalInfo
 typealias RenewalState = StoreKit.Product.SubscriptionInfo.RenewalState
 
-protocol StoreKitManageable {
-    // TODO: Update with new methods
-    func retrieveProducts() async
-    func purchase(_ product: Product) async -> Bool
-    func verifyPurchase<T>(_ verificationResult: VerificationResult<T>) throws -> T
-    func transactionStatusStream() -> Task<Void, Error>
-}
-
-class StoreDataService: StoreKitManageable, ObservableObject {
-    /// Consumables, Non-Consumables, Non-Renewables
-    @Published private(set) var products: [Product] = []
+class StoreDataService: ObservableObject {
+    // Product from the store
+    @Published private(set) var nonConsumables: [Product] = []
+    @Published private(set) var consumables: [Product] = []
+    @Published private(set) var nonRenewables: [Product] = []
+    @Published private(set) var autoRenewables: [Product] = []
     
-    /// Auto-Renewables
-    @Published private(set) var subscriptions: [Product] = []
-    
+    // Purchased products from the store
     @Published private(set) var purchasedNonConsumables: [Product] = []
     @Published private(set) var purchasedConsumables: [Product] = []
     @Published private(set) var purchasedNonRenewables: [Product] = []
     @Published private(set) var purchasedAutoRenewables: [Product] = []
     @Published private(set) var subscriptionGroupStatus: RenewalState?
     
-    @Published var transactionCompletionStatus: Bool = false
-    
+    // Product ID array for getting products from store.
+    // Usually stored in a plist or similar.
     private let productsIds = [
         "nonconsumable.lifetime",
         "consumable.week",
         "subscription.yearly",
         "nonrenewable.year"
     ]
-    private(set) var purchaseStatus: PurchaseStatus = .unknown
+    
+    /// Used for educational purposes
+    private(set) var purchaseStatus: PurchaseStatus = .unknown {
+        didSet {
+            print("--------------------")
+            print("Purchase Status: \(purchaseStatus)")
+            print("--------------------")
+        }
+    }
+
+    /// Background task that listens for Store updates
     private(set) var transactionListener: Task<Void, Error>?
     
     init() {
@@ -75,41 +78,40 @@ class StoreDataService: StoreKitManageable, ObservableObject {
         do {
             let storeProducts = try await Product.products(for: productsIds)
             
-            var newProducts: [Product] = []
-            var newSubscriptions: [Product] = []
+            var nonConsumables: [Product] = []
+            var consumables: [Product] = []
+            var nonRenewables: [Product] = []
+            var autoRenewables: [Product] = []
             
             for product in storeProducts {
                 switch product.type {
+                case .nonConsumable:
+                    nonConsumables.append(product)
+                case .consumable:
+                    consumables.append(product)
+                case .nonRenewable:
+                    nonRenewables.append(product)
                 case .autoRenewable:
-                    newSubscriptions.append(product)
+                    autoRenewables.append(product)
                 default:
-                    // All other cases get applied to same product array.
-                    newProducts.append(product)
+                    break
                 }
             }
             
             // Sort by price and update store
-            products = sortByPrice(newProducts)
-            subscriptions = sortByPrice(newSubscriptions)
+            self.nonConsumables = sortByPrice(nonConsumables)
+            self.consumables = sortByPrice(consumables)
+            self.nonRenewables = sortByPrice(nonRenewables)
+            self.autoRenewables = sortByPrice(autoRenewables)
             
-            for product in self.products {
-                print("Product:: \(product.displayName) in \(product.displayPrice)")
-            }
-            
-            for subcription in self.subscriptions {
-                print("Subscription:: \(subcription.displayName) in \(subcription.displayPrice)")
-            }
+            print("Store products finished loading.")
         } catch {
             // Couldn't get products from App Store
-            print(error)
+            print("Couldn't load products from the App Store: \(error)")
         }
     }
-    
-    private func sortByPrice(_ products: [Product]) -> [Product] {
-        products.sorted(by: { return $0.price < $1.price })
-    }
-    
-    /// Set purchased products
+
+    /// Get purchased products
     @MainActor
     func retrievePurchasedProducts() async {
         var purchasedNonConsumables: [Product] = []
@@ -128,20 +130,20 @@ class StoreDataService: StoreKitManageable, ObservableObject {
                 // Check the product type and assign to correct array.
                 switch transaction.productType {
                 case .nonConsumable:
-                    guard let product = products.first(where: { $0.id == transaction.productID }) else {
+                    guard let product = nonConsumables.first(where: { $0.id == transaction.productID }) else {
                         // Transaction product is not in our list of products offered.
                         return
                     }
                     purchasedNonConsumables.append(product)
                 // TODO: This will never be a product in 'currentEntitlements'
                 case .consumable:
-                    guard let product = products.first(where: { $0.id == transaction.productID }) else {
+                    guard let product = consumables.first(where: { $0.id == transaction.productID }) else {
                         // Transaction product is not in our list of products offered.
                         return
                     }
                     purchasedConsumables.append(product)
                 case .nonRenewable:
-                    guard let product = products.first(where: { $0.id == transaction.productID }) else {
+                    guard let product = nonRenewables.first(where: { $0.id == transaction.productID }) else {
                         // Transaction product is not in our list of products offered.
                         return
                     }
@@ -165,7 +167,7 @@ class StoreDataService: StoreKitManageable, ObservableObject {
                         purchasedNonRenewables.append(product)
                     }
                 case .autoRenewable:
-                    guard let product = subscriptions.first(where: { $0.id == transaction.productID }) else {
+                    guard let product = autoRenewables.first(where: { $0.id == transaction.productID }) else {
                         // Transaction product is not in our list of products offered.
                         return
                     }
@@ -193,7 +195,7 @@ class StoreDataService: StoreKitManageable, ObservableObject {
             group, so products in the subscriptions array all belong to the same group. The statuses that
             `product.subscription.status` returns apply to the entire subscription group.
          */
-        subscriptionGroupStatus = try? await subscriptions.first?.subscription?.status.first?.state
+        subscriptionGroupStatus = try? await autoRenewables.first?.subscription?.status.first?.state
     }
     
     /// Make a purchase
@@ -203,41 +205,28 @@ class StoreDataService: StoreKitManageable, ObservableObject {
             
             switch result {
             case .success(let verification):
-                print("Purchase successful, verify it")
                 do {
                     let verificationResult = try verifyPurchase(verification)
-                    purchaseStatus = .success(verificationResult.productID)
                     
                     await self.retrievePurchasedProducts()
-                    
                     await verificationResult.finish()
-                    transactionCompletionStatus = true
+                    
+                    purchaseStatus = .success(verificationResult.productID)
                     return true
                 } catch {
                     purchaseStatus = .failed(error)
-                    transactionCompletionStatus = false
-                    return false
                 }
             case .pending:
-                print("Transaction is pending for user action related to the account")
                 purchaseStatus = .pending
-                transactionCompletionStatus = false
-                return false
             case .userCancelled:
-                print("User cancelled the transaction")
                 purchaseStatus = .cancelled
-                transactionCompletionStatus = false
-                return false
             default:
-                print("Unknown error occured")
                 purchaseStatus = .failed(StoreKitError.unknownError)
-                transactionCompletionStatus = false
-                return false
             }
+            
+            return false
         } catch {
-            print(error)
             purchaseStatus = .failed(error)
-            transactionCompletionStatus = false
             return false
         }
         
@@ -252,9 +241,8 @@ class StoreDataService: StoreKitManageable, ObservableObject {
             return result // Successfully verified
         }
     }
-    
 
-    func transactionStatusStream() -> Task<Void, Error> {
+    private func transactionStatusStream() -> Task<Void, Error> {
         return Task.detached {
             for await result in Transaction.updates {
                 do {
@@ -268,5 +256,9 @@ class StoreDataService: StoreKitManageable, ObservableObject {
                 }
             }
         }
+    }
+    
+    private func sortByPrice(_ products: [Product]) -> [Product] {
+        products.sorted(by: { return $0.price < $1.price })
     }
 }
