@@ -7,18 +7,20 @@
 
 import Foundation
 import StoreKit
+import Observation
 
+@Observable
 class StoreViewModel: ObservableObject {
-    @Published private(set) var nonConsumables: [Product] = []
-    @Published private(set) var consumables: [Product] = []
-    @Published private(set) var nonRenewables: [Product] = []
-    @Published private(set) var autoRenewables: [Product] = []
+    private(set) var nonConsumables: [Product] = []
+    private(set) var consumables: [Product] = []
+    private(set) var nonRenewables: [Product] = []
+    private(set) var autoRenewables: [Product] = []
     
-    @Published private(set) var purchasedNonConsumables: [Product] = []
-    @Published private(set) var purchasedNonRenewables: [Product] = []
-    @Published private(set) var purchasedAutoRenewables: [Product] = []
+    private(set) var purchasedNonConsumables: [Product] = []
+    private(set) var purchasedNonRenewables: [Product] = []
+    private(set) var purchasedAutoRenewables: [Product] = []
     
-    @Published private(set) var purchaseStatus: PurchaseStatus = .unknown {
+    private(set) var purchaseStatus: PurchaseStatus = .unknown {
         didSet {
             // Alert the user if there is an eror purchasing
             switch purchaseStatus {
@@ -31,8 +33,8 @@ class StoreViewModel: ObservableObject {
         }
     }
     
-    @Published var isAlertShowing: Bool = false
-    @Published var alertMessage: String = ""
+    var isAlertShowing: Bool = false
+    var alertMessage: String = ""
     
     private let storeDataService = StoreDataService()
     
