@@ -13,7 +13,7 @@ struct ProductListView: View {
     @Binding var showingStore: Bool
     
     var body: some View {
-        VStack {
+        NavigationStack {
             List {
                 categoryGroup(title: "NonConsumables", products: vm.nonConsumables)
                 
@@ -28,9 +28,18 @@ struct ProductListView: View {
             .listStyle(PlainListStyle())
             .listRowBackground(Color.clear)
             .scrollContentBackground(.hidden)
+            .navigationTitle("Store")
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Close") {
+                        showingStore = false
+                    }
+                }
+            }
         }
         .alert(vm.alertMessage, isPresented: $vm.isAlertShowing) {
             Button("OK", role: .cancel) { }
+            
         }
     }
 }
