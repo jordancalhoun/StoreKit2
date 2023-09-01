@@ -1,5 +1,5 @@
 //
-//  ProductListView.swift
+//  StoreView.swift
 //  StoreKit2
 //
 //  Created by Jordan Calhoun on 8/28/23.
@@ -8,7 +8,7 @@
 import SwiftUI
 import StoreKit
 
-struct ProductListView: View {
+struct StoreView: View {
     @EnvironmentObject var vm: StoreViewModel
     @Binding var showingStore: Bool
     
@@ -45,11 +45,11 @@ struct ProductListView: View {
 }
 
 #Preview {
-    ProductListView(showingStore: .constant(true))
+    StoreView(showingStore: .constant(true))
         .environmentObject(StoreViewModel())
 }
 
-extension ProductListView {
+extension StoreView {
     private func categoryGroup(title: String, products: [Product]) -> some View{
         return Group {
             Text(title)

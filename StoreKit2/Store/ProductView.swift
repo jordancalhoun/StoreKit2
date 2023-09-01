@@ -55,7 +55,7 @@ struct ProductView: View {
 
 
 #Preview {
-    ProductListView(showingStore: .constant(true))
+    StoreView(showingStore: .constant(true))
         .environmentObject(StoreViewModel())
 }
 

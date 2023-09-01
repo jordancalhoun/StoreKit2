@@ -49,7 +49,7 @@ extension UnlocksListView {
         .buttonStyle(.borderedProminent)
         .padding()
         .popover(isPresented: $showingStore, content: {
-            ProductListView(showingStore: $showingStore)
+            StoreView(showingStore: $showingStore)
         })
     }
     
