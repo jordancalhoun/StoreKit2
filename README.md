@@ -2,6 +2,10 @@
 
 Created to understand StoreKit 2 flow with MVVM Architecture.
 
+Getting Started
+
+Make sure to enable [StoreKit Testing](https://developer.apple.com/documentation/xcode/setting-up-storekit-testing-in-xcode/#Enable-StoreKit-Testing-in-Xcode) before building.
+
 Resources/Credit:
 
 - [InAppPurchaseWithStoreKit2](https://github.com/santoshbotre-royal/InAppPurchaseWithStoreKit2)
